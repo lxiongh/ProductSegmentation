@@ -21,15 +21,15 @@ theta_set = [];
 rho_set = [];
 
 ROW = size(edges, 1);
-
+COL = size(edges,2);
 % 只取前20条直线
 for i=1:20
-    [~, max_idx] = max(R_pi(i,:));
+    [max_R, max_idx] = max(R_pi(i,:));
     theta = 89 + (max_idx-1)*thetastep;
     xp_pi = xp(IDX(i,max_idx));
     y_pi = size(edges2,1)/2 - (xp_pi)*sin(theta*pi/180);
     % 加入了至顶及至底直线的检测，并将其剔除
-    if (y_pi > 0.05*ROW )  &&  ( y_pi < 0.95*ROW)
+    if (y_pi > 0.05*ROW )  &&  ( y_pi < 0.95*ROW) && max_R > COL/20
         y1 = y_pi;
         for j=1:length(rho_set)
             y2 = size(edges2,1)/2 - (rho_set(j))*sin(theta*pi/180);
