@@ -1,4 +1,8 @@
-﻿V3.0
+﻿V3.1
+ 
+	货架栏数比较少时，检测出多条水平分割线的问题
+	
+V3.0
 
 1. 行分割的改动部分
 	直接用canny边缘检测算法，对图片进行边缘提取（以前是利用Efficient graph-based image segmentation算法先对图片过分割，
