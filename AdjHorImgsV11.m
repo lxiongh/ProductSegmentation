@@ -6,7 +6,7 @@ for imnum=1:horImgNum
     % extra hor-edges
     edges = edge(im_gray,'canny');
    % ¸¯Ê´
-    se = strel('rectangle', [1 20]);
+    se = strel('rectangle', [1 15]);
     edges1 = imerode(edges, se);
 
     % ÅòÕÍ
@@ -39,13 +39,13 @@ end
         % use randon algm. which is like to GetHorLines.m
         ROW = size(edges,1);
         thetastep = 0.5;
-        [R xp] = radon(edges,89:thetastep:91);
+        [R xp] = radon(edges,88:thetastep:92);
         [R_pi, IDX] = sort(R,'descend');
         theta_set = [];
         rho_set = [];
         for i=1:10
             [~, max_idx] = max(R_pi(i,:));
-            theta = 89 + (max_idx-1)*thetastep;
+            theta = 88 + (max_idx-1)*thetastep;
             xp_pi = xp(IDX(i,max_idx));
             y_pi = size(edges,1)/2 - (xp_pi)*sin(theta*pi/180);
             if (y_pi > 0.05*ROW )  &&  ( y_pi < 0.95*ROW)

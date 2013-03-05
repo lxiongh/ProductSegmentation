@@ -3,7 +3,7 @@ im_gray = rgb2gray(Iin);
 edges = edge(im_gray,'canny');
 
 % 腐蚀
-se = strel('rectangle', [1 20]);
+se = strel('rectangle', [1 15]);
 edges1 = imerode(edges, se);
 
 % 膨胀
@@ -13,7 +13,7 @@ edges2 = imdilate(edges1, se);
 % ===========2012-11-18===================
 % 将检测直线的范围缩小为+-2度间
 thetastep = 0.5;
-[R xp] = radon(edges2,89:thetastep:91);
+[R xp] = radon(edges2,88:thetastep:92);
 % ---------------------------------------------------------------
 
 [R_pi IDX] = sort(R,'descend');
@@ -22,14 +22,14 @@ rho_set = [];
 
 ROW = size(edges, 1);
 COL = size(edges,2);
-% 只取前20条直线
-for i=1:20
+
+for i=1:50
     [max_R, max_idx] = max(R_pi(i,:));
-    theta = 89 + (max_idx-1)*thetastep;
+    theta = 88 + (max_idx-1)*thetastep;
     xp_pi = xp(IDX(i,max_idx));
     y_pi = size(edges2,1)/2 - (xp_pi)*sin(theta*pi/180);
     % 加入了至顶及至底直线的检测，并将其剔除
-    if (y_pi > 0.05*ROW )  &&  ( y_pi < 0.95*ROW) && max_R > COL/20
+    if (y_pi > 0.05*ROW )  &&  ( y_pi < 0.95*ROW) && max_R > COL/25
         y1 = y_pi;
         for j=1:length(rho_set)
             y2 = size(edges2,1)/2 - (rho_set(j))*sin(theta*pi/180);
@@ -56,6 +56,7 @@ y_origin = size(edges2,1) / 2 - (rho_set) .* sin(theta_set * pi / 180);
 b = (y_origin - (0 - x_origin) .* tan(((theta_set) - 90) * pi / 180));
 k = -tan(((theta_set) - 90) * pi / 180);
 lines = [k b];
-lines = sortrows(lines,2);
-
+if ~isempty(lines)
+    lines = sortrows(lines,2);
+end
 end
