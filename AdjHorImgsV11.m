@@ -6,12 +6,13 @@ for imnum=1:horImgNum
     % extra hor-edges
     edges = edge(im_gray,'canny');
    % ¸¯Ê´
-    se = strel('rectangle', [1 15]);
+    se = strel('line', 10, 0);
     edges1 = imerode(edges, se);
 
     % ÅòÕÍ
-    se = strel('rectangle', [1 1]);
-    edges2 = imdilate(edges1, se);
+%     se = strel('rectangle', [1 1]);
+%     edges2 = imdilate(edges1, se);
+    edges2 = edges1;
     
     row = size(edges2,1);
     col = size(edges2,2);
@@ -38,21 +39,23 @@ end
     function [horLines] = HorLines(edges)
         % use randon algm. which is like to GetHorLines.m
         ROW = size(edges,1);
+        COL = size(edges,2);
+        
         thetastep = 0.5;
         [R xp] = radon(edges,88:thetastep:92);
         [R_pi, IDX] = sort(R,'descend');
         theta_set = [];
         rho_set = [];
         for i=1:10
-            [~, max_idx] = max(R_pi(i,:));
+            [max_R, max_idx] = max(R_pi(i,:));
             theta = 88 + (max_idx-1)*thetastep;
             xp_pi = xp(IDX(i,max_idx));
             y_pi = size(edges,1)/2 - (xp_pi)*sin(theta*pi/180);
-            if (y_pi > 0.05*ROW )  &&  ( y_pi < 0.95*ROW)
+            if (y_pi > 0.05*ROW )  &&  ( y_pi < 0.95*ROW) && max_R > COL/20
                 y1 = y_pi;
                 for j=1:length(rho_set)
                     y2 = size(edges,1)/2 - (rho_set(j))*sin(theta*pi/180);
-                    if abs(y2-y1) < ROW/12
+                    if abs(y2-y1) < ROW/10
                         break;
                     end
                     if j==length(rho_set)

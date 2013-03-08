@@ -3,12 +3,14 @@ im_gray = rgb2gray(Iin);
 edges = edge(im_gray,'canny');
 
 % 腐蚀
-se = strel('rectangle', [1 15]);
+se = strel('line', 10, 0);
 edges1 = imerode(edges, se);
+% edges1 = ImageErode(edges, 10, -2:0.5:2);
 
 % 膨胀
-se = strel('rectangle', [1 1]);
-edges2 = imdilate(edges1, se);
+% se = strel('line', 1, 0);
+% edges2 = imdilate(edges1, se);
+edges2 = edges1;
 
 % ===========2012-11-18===================
 % 将检测直线的范围缩小为+-2度间
@@ -23,19 +25,20 @@ rho_set = [];
 ROW = size(edges, 1);
 COL = size(edges,2);
 
+max_max = max(R_pi(:));
 for i=1:50
     [max_R, max_idx] = max(R_pi(i,:));
     theta = 88 + (max_idx-1)*thetastep;
     xp_pi = xp(IDX(i,max_idx));
     y_pi = size(edges2,1)/2 - (xp_pi)*sin(theta*pi/180);
     % 加入了至顶及至底直线的检测，并将其剔除
-    if (y_pi > 0.05*ROW )  &&  ( y_pi < 0.95*ROW) && max_R > COL/25
+    if (y_pi > 0.05*ROW )  &&  ( y_pi < 0.95*ROW) && max_R > COL/20
         y1 = y_pi;
         for j=1:length(rho_set)
             y2 = size(edges2,1)/2 - (rho_set(j))*sin(theta*pi/180);
             % 修改为判断条件，之前代码的判断条件有误
             % 此处为剔除靠得太近的两直直线
-            if abs(y2-y1) < ROW/12
+            if abs(y2-y1) < ROW/10
                 break;
             end
             if j==length(rho_set)
