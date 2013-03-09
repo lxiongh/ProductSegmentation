@@ -21,9 +21,10 @@ for imnum=1:horImgNum
     up_cursor = 1; down_cursor = size(horLines,1);
     for lnum=1:size(horLines,1)-2
         if horLines(up_cursor+1,2) - horLines(up_cursor,2) ...
-                < horLines(down_cursor,2) - horLines(up_cursor+1,2)
+                < horLines(down_cursor,2) - horLines(up_cursor+1,2) ...
+                && horLines(up_cursor+1, 2) < row/2
             up_cursor = up_cursor + 1;
-        else
+        elseif horLines(down_cursor-1, 2) > row/2
             down_cursor = down_cursor - 1;
         end
     end
@@ -46,7 +47,7 @@ end
         [R_pi, IDX] = sort(R,'descend');
         theta_set = [];
         rho_set = [];
-        for i=1:10
+        for i=1:15
             [max_R, max_idx] = max(R_pi(i,:));
             theta = 88 + (max_idx-1)*thetastep;
             xp_pi = xp(IDX(i,max_idx));
@@ -55,7 +56,7 @@ end
                 y1 = y_pi;
                 for j=1:length(rho_set)
                     y2 = size(edges,1)/2 - (rho_set(j))*sin(theta*pi/180);
-                    if abs(y2-y1) < ROW/10
+                    if abs(y2-y1) < ROW/5
                         break;
                     end
                     if j==length(rho_set)

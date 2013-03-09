@@ -2,18 +2,18 @@ function [ lines, edges2] = GetHorLinesV21( Iin )
 im_gray = rgb2gray(Iin);
 edges = edge(im_gray,'canny');
 
-% 腐蚀
+% 赂炉脢麓
 se = strel('line', 10, 0);
 edges1 = imerode(edges, se);
 % edges1 = ImageErode(edges, 10, -2:0.5:2);
 
-% 膨胀
+% 脜貌脮脥
 % se = strel('line', 1, 0);
 % edges2 = imdilate(edges1, se);
 edges2 = edges1;
 
 % ===========2012-11-18===================
-% 将检测直线的范围缩小为+-2度间
+% 陆芦录矛虏芒脰卤脧脽碌脛路露脦搂脣玫脨隆脦陋+-2露脠录盲
 thetastep = 0.5;
 [R xp] = radon(edges2,88:thetastep:92);
 % ---------------------------------------------------------------
@@ -25,20 +25,26 @@ rho_set = [];
 ROW = size(edges, 1);
 COL = size(edges,2);
 
+if COL > ROW
+    threshold = COL/8;
+else
+    threshold = COL/10;
+end
+
 max_max = max(R_pi(:));
-for i=1:50
+for i=1:40
     [max_R, max_idx] = max(R_pi(i,:));
     theta = 88 + (max_idx-1)*thetastep;
     xp_pi = xp(IDX(i,max_idx));
     y_pi = size(edges2,1)/2 - (xp_pi)*sin(theta*pi/180);
-    % 加入了至顶及至底直线的检测，并将其剔除
+    % 录脫脠毛脕脣脰脕露楼录掳脰脕碌脳脰卤脧脽碌脛录矛虏芒拢卢虏垄陆芦脝盲脤脼鲁媒
     if (y_pi > 0.05*ROW )  &&  ( y_pi < 0.95*ROW) && max_R > COL/20
         y1 = y_pi;
         for j=1:length(rho_set)
             y2 = size(edges2,1)/2 - (rho_set(j))*sin(theta*pi/180);
-            % 修改为判断条件，之前代码的判断条件有误
-            % 此处为剔除靠得太近的两直直线
-            if abs(y2-y1) < ROW/10
+            % 脨脼赂脛脦陋脜脨露脧脤玫录镁拢卢脰庐脟掳麓煤脗毛碌脛脜脨露脧脤玫录镁脫脨脦贸
+            % 麓脣麓娄脦陋脤脼鲁媒驴驴碌脙脤芦陆眉碌脛脕陆脰卤脰卤脧脽
+            if abs(y2-y1) < threshold
                 break;
             end
             if j==length(rho_set)
@@ -46,7 +52,7 @@ for i=1:50
                 theta_set = [theta_set; theta];
             end
         end
-        % 将初始化工作放进了for循环里头
+        % 陆芦鲁玫脢录禄炉鹿陇脳梅路脜陆酶脕脣for脩颅禄路脌茂脥路
         if isempty(rho_set)
             theta_set = theta;
             rho_set = xp_pi;
